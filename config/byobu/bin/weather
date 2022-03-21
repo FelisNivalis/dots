@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+__weather_detail() {
+	$TMUX_PLUGIN_MANAGER_PATH/tmux-weather/scripts/weather.sh
+}
+
+__weather() {
+	__weather_detail
+}
+
+# vi: syntax=sh ts=4 noexpandtab

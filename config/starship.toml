@@ -1,0 +1,591 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+# Use custom format
+format = """
+[┌───────────────────>](dimmed white)
+[│](dimmed white)\
+[ ](#9A348E)$username$sudo$os$hostname${custom.ssh_no_keys}${custom.ssh_keys}[](#9A348E bg:#DA627D)\
+$shell${custom.zsh-version}$shlvl${custom.zsh-history}[](#DA627D bg:#FCA17D)\
+$directory${custom.folder_number}${custom.file_number}[](#FCA17D bg:#86BBD8)\
+${custom.giturl}$git_branch$git_commit$git_state${custom.git_scope}[](#86BBD8 bg:#06969A)\
+$git_metrics$git_status[](#06969A)\
+$package\
+[ ]()$fill\
+$battery$status$jobs${custom.home-dirty}$fill\
+$c$cmake$golang$haskell$julia${custom.luaenv}$nim$nodejs${custom.plenv}${custom.pyenv}${custom.rbenv}$rust$zig$nix_shell${custom.conda_env}\
+[─\\[ ](dimmed white)$cmd_duration[─](dimmed white)$time[ \\]─┐](dimmed white)\
+$line_break\
+[└─](dimmed white)$character"""
+right_format = """[ <───────────────────  ](dimmed white)"""
+
+scan_timeout = 300
+command_timeout = 1500
+
+[username]
+format = "[$user ]($style)"
+style_root = "yellow bold bg:#9A348E"
+style_user = "bright-white bg:#9A348E"
+show_always = true
+
+[sudo]
+disabled = false
+style = "bright-white bg:#9A348E"
+format = "[as$symbol]($style)"
+symbol = "🧙 "
+
+[os]
+disabled = false
+format = "[$symbol ]($style)"
+style = "bold bright-white bg:#9A348E"
+
+[hostname]
+format = "[$hostname( via $ssh_symbol) ]($style)"
+ssh_symbol = " "
+ssh_only = false
+style = "bright-white bg:#9A348E"
+
+[custom.ssh_no_keys]
+description = "SSH missing keys"
+when = "ssh-add -l | grep -q 'no identities'"
+command = "echo 🚫"
+format = "[$symbol$output ]($style)"
+shell = ["bash", "--noprofile", "--norc"]
+symbol = "🔑"
+style = "bold fg:#DA627D bg:#9A348E"
+
+[custom.ssh_keys]
+description = "SSH key count"
+when = "ssh-add -l | grep -v -q 'no identities'"
+command = "ssh-add -l | grep -v 'no identities' | wc -l"
+format = "[$symbol$output ]($style)"
+shell = ["bash", "--noprofile", "--norc"]
+symbol = "🔑"
+style = "bright-white bg:#9A348E"
+
+[shell]
+zsh_indicator = "🚀"
+bash_indicator = "  bash"
+unknown_indicator = "  "
+format = "[$indicator ]($style)"
+disabled = false
+style = "bright-white bg:#DA627D"
+
+[custom.zsh-history]
+description = "The number of history commands."
+format = "[ $output ]($style)"
+style = "bright-white bg:#DA627D"
+when = true
+command = "wc -l <$HISTFILE"
+# command = "echo %!"
+shell = ["bash", "--noprofile", "--norc"]
+
+[custom.zsh-version]
+description = "The version of ZSH."
+format = "[($output )]($style)"
+style = "bright-white bg:#DA627D"
+when = "[[ $SHELL = *zsh ]]"
+command = "echo $ZSH_VERSION"
+shell = ["zsh", "-f"]
+
+[shlvl]
+format = "[$symbol $shlvl ]($style)"
+style = "bright-white bg:#DA627D"
+symbol = ""
+threshold = 1
+disabled = false
+
+[directory]
+read_only = "󰌾"
+fish_style_pwd_dir_length = 2
+repo_root_format = "[($read_only)]($read_only_style)[ $before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path ](bold $style)"
+before_repo_root_style = "dimmed bright-black bg:#FCA17D"
+repo_root_style = "bright-black bg:#FCA17D"
+format = "[( $read_only)]($read_only_style)[ $path ]($style)"
+style = "black bg:#FCA17D"
+read_only_style = "#DA627D bg:#FCA17D"
+
+[custom.file_number]
+command = "find . -maxdepth 1 -type f -not -name '.DS_Store' | wc -l"
+when = true
+symbol = " "
+description = "Number of files in the current working directory"
+format = '[$symbol$output ]($style)'
+style = "black bg:#FCA17D"
+
+[custom.folder_number]
+command = "find . -maxdepth 1 -type d -not -name '.git' -not -name '.' | wc -l"
+when = true
+symbol = "󰉕 "
+description = "Number of folders in the current working directory"
+format = '[$symbol$output ]($style)'
+style = "black bg:#FCA17D"
+
+[custom.giturl]
+# disabled = true
+description = "Display symbol for remote Git server"
+command = """
+GIT_REMOTE=$(command git ls-remote --get-url 2> /dev/null)
+if [[ "$GIT_REMOTE" =~ "github" ]]; then
+    GIT_REMOTE_SYMBOL=" "
+elif [[ "$GIT_REMOTE" =~ "gitlab" ]]; then
+    GIT_REMOTE_SYMBOL=" "
+elif [[ "$GIT_REMOTE" =~ "bitbucket" ]]; then
+    GIT_REMOTE_SYMBOL=" "
+elif [[ "$GIT_REMOTE" =~ "git" ]]; then
+    GIT_REMOTE_SYMBOL="󰊢 "
+else
+    GIT_REMOTE_SYMBOL=" "
+fi
+echo "$GIT_REMOTE_SYMBOL"
+"""
+when = 'git rev-parse --is-inside-work-tree 2>/dev/null'
+format = "[ on $output ]($style)"
+style = "bright-white bg:#86BBD8"
+
+[git_branch]
+format = "[$branch(:$remote_branch) ]($style)"
+style = "bright-white bg:#86BBD8"
+
+[git_commit]
+format = "[\\($hash(|$tag)\\) ]($style)"
+tag_disabled = false
+style = "bright-white bg:#86BBD8"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total) ]($style)\)'
+style = "bright-white bg:#86BBD8"
+
+[custom.git_scope]
+command = '''
+if [ -z "$GIT_AUTHOR_EMAIL" ]; then GIT_AUTHOR_EMAIL=$(git config --local user.email 2>/dev/null); fi
+# if [ -z "$GIT_AUTHOR_NAME" ]; then GIT_AUTHOR_NAME=$(git config --local user.name 2>/dev/null); fi
+if [ -z "$GIT_AUTHOR_NAME" ]; then GIT_AUTHOR_NAME=$(git config user.name 2>/dev/null); fi
+# if [ -n "$GIT_AUTHOR_EMAIL" ] || [ -n "$GIT_AUTHOR_NAME" ]; then printf "as ${GIT_AUTHOR_EMAIL:-$(git config user.email 2>/dev/null)}(${GIT_AUTHOR_NAME:-$(git config user.name 2>/dev/null)})" ; fi
+if [ -n "$GIT_AUTHOR_EMAIL" ]; then
+    printf "as $GIT_AUTHOR_EMAIL($GIT_AUTHOR_NAME)"
+else
+    printf "as $GIT_AUTHOR_NAME"
+fi
+'''
+description = 'The current local Git user.{email,name}'
+format = '[($output )]($style)'
+shell = ["sh"]
+style = "bright-white bg:#86BBD8"
+when = 'git rev-parse --is-inside-work-tree'
+
+[git_metrics]
+disabled = false
+format = "[ ](bg:#06969A)[(+$added )]($added_style)[(-$deleted )]($deleted_style)"
+added_style = "bright-green bg:#06969A"
+deleted_style = "bright-red bg:#06969A"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\] ]($style))'
+style = "bright-white bg:#06969A"
+conflicted = "$count="
+ahead = "$count⇡"
+behind = "$count⇣"
+diverged = "⇕"
+up_to_date = ""
+untracked = "$count?"
+stashed = "$count$"
+modified = "$count!!"
+staged = "$count+"
+renamed = "$count»"
+deleted = "$count✘"
+typechanged = ""
+
+[fill]
+symbol = "─"
+style = "dimmed white"
+# symbol = "·"
+
+# https://github.com/starship/starship/discussions/1252
+# [custom.gitautofetch]
+# description = "Display status of ohmyzsh git-auto-fetch plugin"
+# # guard from https://github.com/ohmyzsh/ohmyzsh/blob/706b2f3765d41bee2853b17724888d1a3f6f00d9/plugins/git-auto-fetch/git-auto-fetch.plugin.zsh#L37
+# command = """
+# if [[ -f "$(command git rev-parse --git-dir)/NO_AUTO_FETCH" ]]; then
+#     printf ""
+# else
+#     printf "󱍾 "
+# fi
+# """
+# style = 'red'
+# shell = ["bash","--norc","--noprofile"]
+# when = 'git rev-parse --is-inside-work-tree 2> /dev/null'
+#
+# [custom.df]
+# command = 'df -h --output=pcent,avail $PWD | tail -n 1 | awk '{print $1 "," $2}''
+# when = "true"
+# shell = ["bash", "--noprofile", "--norc"]
+# symbol = ""
+# format = "[$symbol ($output)]($style) "
+# style = "bright-blue"
+#
+# [custom.gpu]
+# command = 'nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits'
+# description = 'The usage rate of the NVIDIA GPU'
+# when = ' type nvidia-smi '
+# format = '$symbol [$output%]($style) '
+# style = 'bold blue'
+# symbol = 'GPU'
+
+[cmake]
+# #0068C7 #F32735 #3DAE2B #003764 #DCE3EB
+format = " [](#0068C7)[CMake](bold #DCE3EB bg:#0068C7)[](#0068C7 bg:#3DAE2B)[$symbol](#003764 bg:#3DAE2B)[](bg:#3DAE2B #F32735)[( $version )]($style)[](#F32735) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold #003764 bg:#F32735"
+symbol = "△"
+
+# [aws]
+# symbol = "  "
+#
+# [buf]
+# symbol = " "
+
+[c]
+format = " [](#FFFFFF)[C]($style inverted)[ $symbol($version )]($style)[](#055A9D) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold #FFFFFF bg:#055A9D"
+symbol = " "
+
+# [crystal]
+# symbol = " "
+#
+# [dart]
+# symbol = " "
+
+# [elixir]
+# symbol = " "
+#
+# [elm]
+# symbol = " "
+#
+# [fennel]
+# symbol = " "
+
+# [fossil_branch]
+# symbol = " "
+
+[golang]
+format = " [](#FFFFFF)[GO]($style inverted)[ $symbol($version )]($style)[](#007D9C) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold #FFFFFF bg:#007D9C"
+not_capable_style = "bold #FDDD00 bg:#007D9C"
+symbol = " "
+
+# [guix_shell]
+# symbol = " "
+
+[haskell]
+format = " [](#000000)[Haskell]($style inverted)[ $symbol($version )]($style)[](#5E5086) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold #000000 bg:#5E5086"
+symbol = " "
+
+# [haxe]
+# symbol = " "
+#
+# [hg_branch]
+# symbol = " "
+#
+# [java]
+# symbol = " "
+
+[julia]
+# #CB3C33 #4063D8 #9558B2 #389826
+format = " [](#4063D8)[julia]($style inverted)[ $symbol($version )]($style)[](#389826) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold #4063D8 bg:#389826"
+symbol = " "
+
+# [kotlin]
+# symbol = " "
+
+[custom.luaenv]
+description = "Print Lua version."
+format = " [](#FFFFFF)[Lua]($style inverted)[ $symbol($output )]($style)[](#00007F) [─](dimmed white)"
+when = """[ -n "$LUAENV_VERSION" ] || [ "$(luaenv version-file)" != "$LUAENV_ROOT/version" ]"""
+style = "bold #FFFFFF bg:#00007F"
+symbol = " "
+command = """
+if [ -n "$LUAENV_VERSION" ]; then
+    echo $LUAENV_VERSION
+else
+    cat $(luaenv version-file)
+fi
+"""
+detect_extensions = [ "lua" ]
+detect_files = [ ".lua-version" ]
+detect_folders = [ "lua" ]
+
+# [lua]
+# format = " [](#FFFFFF)[Lua]($style inverted)[ $symbol($version )]($style)[](#00007F) [─](dimmed white)"
+# version_format = "v$raw"
+# style = "bold #FFFFFF bg:#00007F"
+# symbol = " "
+
+# [memory_usage]
+# symbol = "󰍛 "
+#
+# [meson]
+# symbol = "󰔷 "
+
+[nim]
+format = " [](#FFFFFF dimmed)[nim]($style inverted)[ $symbol($version )]($style)[](#F3E853) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold dimmed #FFFFFF bg:#F3E853"
+symbol = "󰆥 "
+
+[nix_shell]
+format = ' [](#5175C0)[Nix](bold #FFFFFF bg:#5175C0)[](#5175C0 bg:#7EBAE4)[ $symbol$state( \($name\))](bold #FFFFFF bg:#7EBAE4)[](#7EBAE4) [─](dimmed white)'
+symbol = " "
+
+[nodejs]
+format = " [](#303030)[Node.js]($style inverted)[ $symbol($version )]($style)[](#68A063) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold #303030 bg:#68A063"
+not_capable_style = "bold red bg:#68A063"
+symbol = " "
+
+# [ocaml]
+# symbol = " "
+
+[package]
+format = " [$symbol$version]($style) "
+version_format = "v$raw"
+style = "208 bold"
+symbol = "󰏗 "
+
+# [perl]
+# format = " [](#61C5BA)[Perl]($style inverted)[ $symbol($version )]($style)[](#0073A1) [─](dimmed white)"
+# version_format = "v$raw"
+# style = "bold bg:#0073A1 #61C5BA"
+# symbol = " "
+
+[custom.plenv]
+description = "Print plenv Perl version."
+format = " [](#61C5BA)[Perl]($style inverted)[ $symbol($output )]($style)[](#0073A1) [─](dimmed white)"
+when = """[ -n "$PLENV_VERSION" ] || [ "$(plenv version-file)" != "$PLENV_ROOT/version" ]"""
+style = "bold bg:#0073A1 #61C5BA"
+symbol = " "
+command = """
+if [ -n "$PLENV_VERSION" ]; then
+    echo $PLENV_VERSION
+else
+    echo $(plenv version-name)
+fi
+"""
+detect_extensions = [ "pl", "pm", "pod" ]
+detect_files = [ "Makefile.PL", "Build.PL", "cpanfile", "cpanfile.snapshot", "META.json", "META.yml", ".perl-version" ]
+
+# [php]
+# symbol = " "
+#
+# [pijul_channel]
+# symbol = " "
+
+[custom.pyenv]
+description = "Print Python version."
+format = ' [](#306998)[Python]($style inverted)[ $symbol($output )]($style)[](#FFD43B) [─](dimmed white)'
+when = """[ -n "$PYENV_VERSION" ] || [ "$(pyenv version-file)" != "$PYENV_ROOT/version" ]"""
+style = "#306998 bg:#FFD43B bold"
+symbol = " "
+command = """
+if [ -n "$PYENV_VERSION" ]; then
+    echo $PYENV_VERSION
+else
+    echo $(pyenv version-name)
+fi
+"""
+detect_files = [ "requirements.txt", ".python-version", "pyproject.toml", "Pipfile", "tox.ini", "setup.py", "__init__.py" ]
+detect_extensions = [ "py" ]
+
+# [python]
+# format = ' [](#306998)[Python]($style inverted)[ $symbol$pyenv_prefix($version )(\($virtualenv\) )]($style)[](#FFD43B) [─](dimmed white)'
+# pyenv_prefix = "pyenv "
+# version_format = "v$raw"
+# pyenv_version_name = true
+# style = "#306998 bg:#FFD43B bold"
+# symbol = " "
+
+# [rlang]
+# symbol = "󰟔 "
+
+[custom.rbenv]
+description = "Print Ruby version."
+format = " [](#101010)[Ruby]($style inverted)[ $symbol($output )]($style)[](#CC342D) [─](dimmed white)"
+when = """[ -n "$RBENV_VERSION" ] || [ "$(rbenv version-file)" != "$RBENV_ROOT/version" ]"""
+style = "bold fg:#101010 bg:#CC342D"
+symbol = " "
+command = """
+if [ -n "$RBENV_VERSION" ]; then
+    echo $RBENV_VERSION
+else
+    echo $(rbenv version-name)
+fi
+"""
+detect_extensions = [ "rb" ]
+detect_files = [ "Gemfile", ".ruby-version" ]
+shell = ["sh"]
+
+# [ruby] # laggy; > 500ms
+# format = " [](#000000)[Ruby]($style inverted)[ $symbol($version )]($style)[](#CC342D) [─](dimmed white)"
+# version_format = "v$raw"
+# style = "bold #000000 bg:#CC342D"
+# symbol = " "
+
+[rust]
+format = " [](#FFFFFF)[Rust]($style inverted)[ $symbol($version )]($style)[](#000000) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold #FFFFFF bg:#000000"
+symbol = " "
+
+# [scala]
+# symbol = " "
+#
+# [swift]
+# symbol = " "
+
+[zig]
+format = " [](#000000)[Zig]($style inverted)[ $symbol($version )]($style)[](#F7A41D) [─](dimmed white)"
+version_format = "v$raw"
+style = "bold #000000 bg:#F7A41D"
+symbol = " "
+
+[custom.conda_env]
+description = "Print activated (Ana/Mini)Conda/(Micro)Mamba envs."
+format = " [](#FFFFFF)[Conda]($style inverted)[ $symbol($output )]($style)[](#43B02A) [─](dimmed white)"
+when = """[ -n "$CONDA_PROMPT_MODIFIER" ]"""
+style = "bold fg:#FFFFFF bg:#43B02A"
+symbol = "󱔎 "
+command = '''
+echo $([[ "$CONDA_PROMPT_MODIFIER" =~ ^[[:space:]]*\((.*)\)[[:space:]]*$ ]] && printf "${BASH_REMATCH[1]}") | sed -E 's/;|,/  /'
+'''
+shell = ["bash", "--norc", "--noprofile"]
+
+[time]
+format = "at [$time]($style)"
+disabled = false
+
+[cmd_duration]
+format = "took [$duration]($style)"
+min_time = 1
+show_milliseconds = true
+show_notifications = true
+
+# line_break
+
+[jobs]
+format = "[$symbol$number]($style)[─](dimmed white)"
+symbol = "✦ "
+style = "bold blue"
+threshold = 1
+symbol_threshold = 1
+number_threshold = 1
+
+[battery]
+format = "[$symbol$percentage]($style)[─](dimmed white)"
+full_symbol = "󰁹 "
+charging_symbol = "󰂄 "
+discharging_symbol = "󰂃 "
+unknown_symbol = "󰁽 "
+empty_symbol = "󰂎 "
+
+[[battery.display]]
+threshold = 90
+
+[status]
+format = "[$symbol $status]($style)[─](dimmed white)"
+symbol = "❌"
+style = "bold red"
+disabled = false
+pipestatus = true
+
+[custom.home-dirty]
+description = "Check if home directory is dirty."
+format = '[($output)]($style)[─](dimmed white)'
+when = true
+command = """
+ret=""
+for i in $(command ls -A $HOME); do
+    case $i in
+        .bash_logout);;
+        .bash_profile);;
+        .bashrc);;
+        .cache);;
+        .conda);;
+        .config);;
+        .local);;
+        .pcsc10);;
+        .profile);;
+        .sos);;
+        .ssh);;
+        .sudo_as_admin_successful);;
+        .xsessionrc);;
+        .zshenv);;
+        My);;
+        *)
+            ret+=" $i";;
+    esac
+done
+if [ -n "$ret" ]; then
+    echo "󰡻 $ret"
+fi
+unset ret
+"""
+shell = ["bash", "--noprofile", "--norc"]
+
+[os.symbols]
+Alpaquita = ""
+Alpine = ""
+AlmaLinux = ""
+Amazon = ""
+Android = ""
+Arch = ""
+Artix = ""
+CentOS = ""
+Debian = ""
+DragonFly = ""
+Emscripten = ""
+EndeavourOS = ""
+Fedora = ""
+FreeBSD = ""
+Garuda = "󰛓"
+Gentoo = ""
+HardenedBSD = "󰞌"
+Illumos = "󰈸"
+Kali = ""
+Linux = ""
+Mabox = ""
+Macos = ""
+Manjaro = ""
+Mariner = ""
+MidnightBSD = ""
+Mint = ""
+NetBSD = ""
+NixOS = ""
+OpenBSD = "󰈺"
+openSUSE = ""
+OracleLinux = "󰌷"
+Pop = ""
+Raspbian = ""
+Redhat = ""
+RedHatEnterprise = ""
+RockyLinux = ""
+Redox = "󰀘"
+Solus = "󰠳"
+SUSE = ""
+Ubuntu = ""
+Unknown = ""
+Void = ""
+Windows = "󰍲"
+
+# Replace the '❯' symbol in the prompt with '➜'
+[character] # The name of the module we are configuring is 'character'
+success_symbol = '[❯](bold green)' # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
