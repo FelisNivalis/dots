@@ -1,0 +1,6 @@
+pkgs_dirs:
+  - ${XDG_DATA_HOME}/conda/pkgs
+envs_dirs:
+  - ${XDG_DATA_HOME}/conda/envs
+auto_activate_base: false
+env_prompt: '({stacked_env}) '

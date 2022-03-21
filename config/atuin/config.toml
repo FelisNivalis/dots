@@ -1,0 +1,4 @@
+db_path = "$ATUIN_DB_PATH"
+inline_height = 30
+show_preview = true
+keymap_mode = "auto"

@@ -1,0 +1,35 @@
+# https://wiki.debian.org/Xsession
+# https://web.archive.org/web/20210630021432/https://www.debian.org/doc/manuals/debian-reference/ch07.en.html#_starting_the_x_window_system
+
+# should match `/etc/xrdp/sesman.ini`
+export XAUTHORITY=$XDG_STATE_HOME/Xsession/.Xauthority
+export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc":"$XDG_CONFIG_HOME/gtk-2.0/gtkrc.mine"
+
+# ~/.cache
+export QML_DISK_CACHE_PATH="$XDG_CACHE_HOME/qmlcache"
+export KDE_PREP_CACHE="$XDG_CACHE_HOME/KDE"
+
+# /etc/X11/Xsession defines $ERRFILE and redirects fd 1 and 2 to $ERRFILE.
+# Changing that file would add to management burden
+OLD_ERRFILE=$ERRFILE
+export ERRFILE=$XDG_STATE_HOME/xsession-errors
+exec >>$ERRFILE 2>&1
+if [ -n "$OLD_ERRFILE" ] && [ -f "$OLD_ERRFILE" ]; then
+	echo "Content of \"$OLD_ERRFILE\":"
+	cat "$OLD_ERRFILE"
+	rm -v "$OLD_ERRFILE"
+fi
+unset OLD_ERRFILE
+
+# gnupg
+export GNUPGHOME=$XDG_CONFIG_HOME/gnupg
+
+# ICEauthority
+export ICEAUTHORITY=$XDG_STATE_HOME/ICEauthority
+
+# less
+export LESSHISTFILE="$XDG_DATA_HOME/less/history"
+export LESSKEY="$XDG_CONFIG_HOME/less/keys"
+
+export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+export MACHINE_STORAGE_PATH="$XDG_DATA_HOME"/docker-machine

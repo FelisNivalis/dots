@@ -1,0 +1,11 @@
+[MESSAGES CONTROL]
+disable=
+    missing-docstring,
+    missing-function-docstring,
+    line-too-long,
+    invalid-name,
+
+; [MAIN]
+; init-hook="
+;     import os, subprocess, sys
+;     if (pyenv_root := os.environ.get('PYENV_ROOT')) and (ver := subprocess.check_output(['pyenv', 'version-name']).decode().strip()) != 'system': path = os.path.join(pyenv_root, 'versions', ver, 'lib'); sys.path.append(os.path.join(path, os.listdir(path)[0], 'site-packages'))"

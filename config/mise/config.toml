@@ -1,0 +1,114 @@
+[tools]
+"node" = ["latest"]
+pnpm = "latest"
+bun = "latest"
+deno = "latest"
+"npm:yarn" = "latest"
+# https://github.com/janoside/btc-rpc-explorer/issues/608
+"npm:ijavascript" = "latest"
+"npm:itypescript" = "latest"
+"npm:wsl-open" = "latest"
+# "npm:figlet-cli" = "latest"     # FIGlet is a program for making large letters out of ordinary text
+"npm:neovim" = "latest"
+# "npm:webtorrent-cli" = "latest"
+# "npm:github:SillyTavern/SillyTavern" = "latest"
+
+"rust" = ["latest"]
+"cargo:evcxr_jupyter" = "latest"
+"cargo:juliaup" = "latest"
+"cargo:zellij" = "latest"
+# "cargo:ast-grep" = "latest"
+# "cargo:https://github.com/hanshuaikang/Nping" = "latest" # A Ping Tool in Rust with Real-Time Data and Visualizations
+# "cargo:https://github.com/yshavit/mdq" = "latest" # like jq but for Markdown
+"cargo:cargo-audit" = "latest"
+"cargo:cargo-llvm-cov" = "latest"
+"cargo:cargo-mutants" = "latest"
+"cargo:cargo-edit" = "latest"
+# "cargo:oha" = "latest" # HTTP load generator
+"cargo:https://github.com/linkdd/regname" = "latest"
+
+"python" = ["latest"]
+"pipx" = ["latest"]
+"uv" = ["latest"]
+# mise doesn't manage manpages nor setting `PIPX_MAN_DIR`
+"pipx:neovim-remote" = "latest"
+# "pipx:terminaltexteffects" = "latest"
+"pipx:posting" = "latest"
+"pipx:nvitop" = "latest"
+# "pipx:bbot" = "latest" # The recursive internet scanner for hackers.
+"pipx:git-revise" = "latest"
+"pipx:pylatexenc" = "latest" # optional dependency of render-markdown.nvim
+# "pipx:wtfis" = "latest"      # Passive hostname, domain and IP lookup tool
+# "pipx:aider-chat" = "latest" # requires libffi
+# "pipx:service-ping-sping" # terminal HTTP/TCP latency monitoring tool
+"pipx:ucs-detect" = "latest" # tests Unicode version and support level of a terminal emulator
+
+# "pipx:open-webui" = { version = "latest", uvx_args = "--override .config/mise/open-webui-req.txt" } # path relative to $HOME
+
+"ubi:haskell/ghcup-hs" = { version = "latest", exe = "ghcup" }
+"ubi:mamba-org/micromamba-releases" = { version = "latest", exe = "micromamba" }
+
+"ubi:ZetloStudio/ZeQLplus" = { version = "latest", exe = "zeql" } # Terminal SQLite Database Browser
+# "ubi:wtfutil/wtf" = { version = "latest", exe = "wtfutil" } # personal information dashboard
+# "ubi:yt-dlp/yt-dlp" = "latest"
+"ubi:LostRuins/koboldcpp" = "latest" # Run GGUF models easily with a KoboldAI UI
+
+"aqua:ollama/ollama" = "latest"
+
+"go" = ["latest"]
+# "go:github.com/jmhobbs/terminal-parrot" = "latest"
+# "go:github.com/noperator/sol/cmd/sol" = "latest"     # A de-minifier (formatter, exploder, beautifier) for shell one-liners
+# "go:github.com/skatkov/devtui" = "latest"            # A Swiss-army app for developers
+"go:github.com/monasticacademy/httptap" = "latest" # View HTTP/HTTPS requests made by any Linux program
+"go:github.com/bmf-san/ggc" = "latest"             # Git CLI
+# "go:github.com/noperator/jqfmt/cmd/jqfmt" = "latest"
+
+# "zig" = ["latest"]
+"usage" = ["latest"]
+
+# community-developed
+# https://github.com/mise-plugins
+# "nim" = ["latest"]
+"racket" = ["latest"]
+
+# https://www.reddit.com/r/LocalLLM/comments/1ij3j8m/open_webui_vs_lm_studio_vs_msty_vs_insertapphere/
+# TODO:
+# comfy extensions
+# https://github.com/AUTOMATIC1111/stable-diffusion-webui # run webui.sh
+# https://github.com/oobabooga/text-generation-webui # manually venv; write `user_data` folder; similar problem to sillytavern
+# https://github.com/danny-avila/LibreChat # npm
+# all these tools store models etc. under the project directory. maybe asdf plugins to rescue?
+# https://github.com/ServiceStack/llms
+
+# tools with complex args
+# [Access LLM from the CLI](https://github.com/simonw/llm)
+[tools."pipx:llm"]
+version = "latest"
+# https://github.com/GNtousakis/llm-commit
+uvx_args = "--with llm-ollama,llm-commit"
+pipx_args = "--preinstall llm-ollama,llm-commit"
+
+# [tools."pipx:comfy-cli"]
+# version = "latest"
+# # comfy-cli has no configurations for cuda>126 yet.
+# uvx_args = "--index https://pypi.org/simple --index https://download.pytorch.org/whl/cu130 --with torch,torchvision,torchaudio --prerelease=if-necessary-or-explicit"
+# uvx = "true"
+# pipx_args = "--index-url https://download.pytorch.org/whl/cu130 --preinstall torch,torchvision,torchaudio --pip-args '--pre'"
+
+# lsp
+[tools."pipx:python-lsp-server"]
+version = "latest"
+extras = "all"
+pipx_args = "--preinstall pylsp-mypy,pyls-isort,python-lsp-black,pyls-memestra,pylsp-rope,python-lsp-ruff,pylint-venv"
+uvx_args = "--with pylsp-mypy,pyls-isort,python-lsp-black,pyls-memestra,pylsp-rope,python-lsp-ruff,pylint-venv"
+
+
+[settings]
+python.compile = false
+# http://mise-versions.jdx.dev/python-precompiled
+# mise has to build from scratch if the latest is not yet on the list
+# disable that because I don't have dependencies installed
+experimental = true
+# deprecated; `rm $GOPATH` needs root privilege
+go_set_gopath = true
+# npm.bun = true

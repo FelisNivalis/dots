@@ -1,0 +1,26 @@
+ipython
+ipywidgets
+jupyterlab
+jupyterlab-lsp
+notebook
+papermill
+euporie
+voila
+bash_kernel
+zsh_jupyter_kernel
+sos
+sos-notebook
+# sos-papermill
+# sos-bash
+# sos-javascript
+# sos-python
+# jupyterlab_sos
+
+llama-cpp-python
+ollama
+langchain
+langchain-ollama
+langchain-huggingface
+langgraph
+diffusers
+gguf
