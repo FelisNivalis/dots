@@ -1,0 +1,10 @@
+# Must literally start with `$HOME` or `/`.
+# If set after installing KDE, old links will keep in the desktop (e.g. the "Places"), but should actually work fine.
+XDG_DESKTOP_DIR="$HOME/my/Desktop"
+XDG_DOCUMENTS_DIR="$HOME/my/Documents"
+XDG_DOWNLOAD_DIR="$HOME/my/Downloads"
+XDG_MUSIC_DIR="$HOME/my/Music"
+XDG_PICTURES_DIR="$HOME/my/Pictures"
+XDG_PUBLICSHARE_DIR="$HOME/my/Public"
+XDG_TEMPLATES_DIR="$HOME/my/Templates"
+XDG_VIDEOS_DIR="$HOME/my/Videos"

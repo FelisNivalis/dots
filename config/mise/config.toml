@@ -1,0 +1,18 @@
+[tools]
+"node" = ["20"]
+"npm:yarn" = "latest"
+"npm:ijavascript" = "latest"
+
+"rust" = ["latest"]
+"cargo:evcxr_jupyter" = "latest"
+
+"pipx" = ["latest"]
+"pipx:visidata" = "latest"
+"pipx:pyinfra" = "latest"
+"pipx:tiptop" = "latest"
+"pipx:glances" = "latest"
+"pipx:neovim-remote" = "latest"
+
+"usage" = "latest"
+[settings]
+experimental = true

@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+__cpu_percentage_detail() {
+	${TMUX_PLUGIN_MANAGER_PATH}/tmux-cpu/scripts/cpu_percentage.sh
+}
+
+__cpu_percentage() {
+	__cpu_percentage_detail
+}
+
+# vi: syntax=sh ts=4 noexpandtab
+

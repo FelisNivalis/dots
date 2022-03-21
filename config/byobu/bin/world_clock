@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+__world_clock_detail() {
+	date "$DATE_FMT"
+}
+
+__world_clock() {
+	__world_clock_detail
+}
+
+# vi: syntax=sh ts=4 noexpandtab
