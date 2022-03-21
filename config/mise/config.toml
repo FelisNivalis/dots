@@ -1,0 +1,73 @@
+[tools]
+"node" = ["20"]
+"npm:yarn" = "latest"
+# https://github.com/janoside/btc-rpc-explorer/issues/608
+"npm:ijavascript" = "latest"
+"npm:itypescript" = "latest"
+"npm:wsl-open" = "latest"
+"npm:figlet-cli" = "latest"
+"npm:gtop" = "latest"
+"npm:neovim" = "latest"
+
+"rust" = ["latest"]
+"cargo:evcxr_jupyter" = "latest"
+"cargo:ripgrep" = "latest"
+"cargo:ripgrep_all" = "latest"
+"cargo:dua" = "latest"
+"cargo:hexyl" = "latest"
+"cargo:gping" = "latest"
+"cargo:lurk-cli" = "latest"
+"cargo:difftastic" = "latest"
+"cargo:juliaup" = "latest"
+
+"python" = ["3.12.4"]
+# http://mise-versions.jdx.dev/python-precompiled
+# mise has to build from scratch if the latest is not yet on the list
+"pipx" = ["latest"]
+# mise doesn't manage manpages nor setting `PIPX_MAN_DIR`
+"pipx:visidata" = "latest"
+"pipx:httpie" = "latest"
+"pipx:pyinfra" = "latest"
+"pipx:tiptop" = "latest"
+"pipx:glances" = "latest" # TODO: glances[all]
+"pipx:neovim-remote" = "latest"
+"pipx:terminaltexteffects" = "latest"
+"pipx:posting" = "latest"
+
+"go" = ["latest"]
+"go:github.com/muesli/duf" = "latest"
+"go:github.com/jesseduffield/lazygit" = "latest"
+"go:github.com/jmhobbs/terminal-parrot" = "latest"
+"go:github.com/rs/curlie" = "latest"
+
+"zig" = ["latest"]
+"usage" = ["latest"]
+
+# community-developed
+# https://github.com/mise-plugins
+"nim" = ["latest"]
+"racket" = ["latest"]
+"ghc" = ["latest"]
+"stack" = ["latest"]
+"cabal" = ["latest"]
+
+[plugins]
+# https://github.com/sestrella/asdf-ghcup/pull/39
+"ghc" = "https://github.com/FelisNivalis/asdf-ghcup"
+"stack" = "https://github.com/FelisNivalis/asdf-ghcup"
+"cabal" = "https://github.com/FelisNivalis/asdf-ghcup"
+
+[tasks.install-all]
+run = [
+	"mise install --yes",
+	"mise upgrade --yes",
+	"mise prune --yes",
+	"mise reshim",
+]
+raw = true
+
+
+[settings]
+experimental = true
+# deprecated; `rm $GOPATH` needs root privilege
+go_set_gopath = true

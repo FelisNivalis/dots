@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+__network_bandwidth_detail() {
+	$TMUX_PLUGIN_MANAGER_PATH/tmux-network-bandwidth/scripts/network-bandwidth.sh
+}
+
+__network_bandwidth() {
+	__network_bandwidth_detail
+}
+
+# vi: syntax=sh ts=4 noexpandtab
