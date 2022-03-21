@@ -1,0 +1,6 @@
+name: jupyter-kernels
+channels:
+  - conda-forge
+dependencies:
+  - xeus-lua
+  - xeus-cling

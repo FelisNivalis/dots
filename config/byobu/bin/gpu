@@ -1,0 +1,13 @@
+#!/bin/sh -e
+
+__gpu_detail() {
+	${TMUX_PLUGIN_MANAGER_PATH}/tmux-cpu/scripts/gpu_temp.sh | sed 's/C/°C/g'
+	echo -n ' '
+	${TMUX_PLUGIN_MANAGER_PATH}/tmux-cpu/scripts/gram_percentage.sh
+}
+
+__gpu() {
+	__gpu_detail
+}
+
+# vi: syntax=sh ts=4 noexpandtab

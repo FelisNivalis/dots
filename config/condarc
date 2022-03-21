@@ -1,0 +1,6 @@
+pkgs_dirs:
+  - $HOME/.local/share/conda/pkgs
+envs_dirs:
+  - $HOME/.local/share/conda/envs
+auto_activate_base: false
+env_prompt: '({stacked_env}) '
